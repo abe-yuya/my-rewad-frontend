@@ -30,6 +30,8 @@ const config: NuxtConfig = {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
+    '~plugins/persisted-state',
+    '~plugins/axios-accessor',
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
