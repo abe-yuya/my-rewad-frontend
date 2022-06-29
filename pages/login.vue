@@ -7,7 +7,7 @@
       <input
         id="email"
         type="text"
-        v-model="email"
+        v-model="inputValues.email"
         placeholder="my-reward@example.com"
         class="shadow appearance-none border rounded w-full py-2 px-3 text-grey-darker"
       >
@@ -19,7 +19,7 @@
       <input
         id="password"
         type="password"
-        v-model="password"
+        v-model="inputValues.password"
         placeholder="password"
         class="shadow appearance-none border border-red rounded w-full py-2 px-3 text-grey-darker mb-3"
       >
@@ -46,26 +46,35 @@
 </template>
 
 <script lang="ts">
+import { defineComponent, reactive, useRouter } from '@nuxtjs/composition-api';
 import { userStore } from '~/store'
+import { LoginValues } from '~/types/props-types'
 
-export default {
-  data() {
-    return {
+export default defineComponent ({
+  setup(_) {
+    const router = useRouter();
+    const inputValues = reactive<LoginValues>({
       email: '',
       password: '',
-    }
-  },
-  methods: {
-    async submit() {
-      await userStore.login({
-        email: this.email,
-        password: this.password,
+    });
+
+    async function submit() {
+      await userStore.login( {
+        email: inputValues.email,
+        password: inputValues.password,
       })
-      this.$router.push('/welcome')
-    },
-    async register() {
-      this.$router.push('/register')
+      router.push('/welcome')
     }
+
+    async function register() {
+      router.push('/register')
+    }
+
+    return {
+      submit,
+      register,
+      inputValues,
+    };
   },
-}
+});
 </script>

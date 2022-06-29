@@ -8,42 +8,42 @@
           </h1>
           <input
             type="text"
-            v-model="username"
+            v-model="inputValues.username"
             class="block border border-grey-light w-full p-3 rounded mb-4"
             name="username"
             placeholder="ユーザー名"
           />
           <input
             type="text"
-            v-model="email"
+            v-model="inputValues.email"
             class="block border border-grey-light w-full p-3 rounded mb-4"
             name="email"
             placeholder="メールアドレス"
           />
           <input
             type="text"
-            v-model="password"
+            v-model="inputValues.password"
             class="block border border-grey-light w-full p-3 rounded mb-4"
             name="password"
             placeholder="パスワード"
           />
           <input
             type="text"
-            v-model="confirm_password"
+            v-model="inputValues.confirm_password"
             class="block border border-grey-light w-full p-3 rounded mb-4"
             name="confirm_password"
             placeholder="パスワード（確認用）"
           />
           <input
             type="text"
-            v-model="work_place"
+            v-model="inputValues.work_place"
             class="block border border-grey-light w-full p-3 rounded mb-4"
             name="work_place"
             placeholder="会社名"
           />
           <input
             type="text"
-            v-model="occupation"
+            v-model="inputValues.occupation"
             class="block border border-grey-light w-full p-3 rounded mb-4"
             name="occupation"
             placeholder="職業"
@@ -71,34 +71,45 @@
 </template>
 
 <script lang="ts">
+import { defineComponent, reactive, useRouter } from '@nuxtjs/composition-api'
 import { userStore } from '~/store'
+import { signUpValues } from '~/types/props-types'
 
-export default {
-  data() {
-    return {
+export default defineComponent({
+  setup(_) {
+    const router = useRouter();
+    const inputValues = reactive<signUpValues>({
       username: '',
       email: '',
       password: '',
       confirm_password: '',
       work_place: '',
       occupation: '',
+    })
+
+
+    async function register() {
+      await userStore.createUser({
+        username: inputValues.username,
+        email: inputValues.email,
+        password: inputValues.password,
+        confirm_password: inputValues.confirm_password,
+        work_place: inputValues.work_place,
+        occupation: inputValues.occupation,
+      })
+      router.push('/welcome')
+    }
+
+    async function login() {
+      router.push('/login')
+    }
+
+
+    return {
+      register,
+      login,
+      inputValues,
     }
   },
-  methods: {
-    async register() {
-      await userStore.createUser({
-        username: this.username,
-        email: this.email,
-        password: this.password,
-        confirm_password: this.confirm_password,
-        work_place: this.work_place,
-        occupation: this.occupation,
-      })
-      this.$router.push('/welcome')
-    },
-    async login() {
-      this.$router.push('/login')
-    }
-  }
-}
+});
 </script>

@@ -7,19 +7,27 @@
 </template>
 
 <script lang="ts">
+import { defineComponent, ref, useRouter, computed } from '@nuxtjs/composition-api';
 import { userStore } from '~/store'
 
-export default {
-  computed: {
-    user() {
+export default defineComponent({
+  setup(_) {
+    const router = useRouter();
+
+    const user = computed(() => {
       return userStore.getUser
-    }
-  },
-  methods: {
-    async logout() {
+    })
+
+    async function logout() {
       await userStore.logout()
-      this.$router.push('/login')
+      router.push('/login')
     }
-  }
-}
+
+
+    return {
+      user,
+      logout,
+    };
+  },
+});
 </script>

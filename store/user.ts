@@ -1,5 +1,6 @@
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators';
 import { $axios } from '~/utils/api'
+import { userData, signUpValues } from '~/types/props-types'
 
 @Module({
   name: 'user',
@@ -26,23 +27,23 @@ export default class User extends VuexModule {
 
   // ログイン
   @Action({ rawError: true })
-  public async login(userData: any) {
+  public async login(userData: userData) {
     await $axios.get('sanctum/csrf-cookie').then(async () => {
       const { data } = await $axios.post('/login', userData);
-      console.log(data);
       this.setResponse(data);
     })
   }
 
   // ログアウト
   @Action ({ rawError: true })
-  public logout(): void {
+  public async logout(): Promise<void> {
+    await $axios.post('/logout');
     this.setResponse(null);
   }
 
   // 新規登録
   @Action({ rawError: true })
-  public async createUser(userData: User) {
+  public async createUser(userData: signUpValues) {
     const { data } = await $axios.post('/register', userData);
     this.setResponse(data);
   }
