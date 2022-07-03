@@ -28,7 +28,7 @@ export default class User extends VuexModule {
   // ログイン
   @Action({ rawError: true })
   public async login(userData: userData) {
-    await $axios.get('sanctum/csrf-cookie').then(async () => {
+    await $axios.get('sanctum/csrf-cookie').then(async (): Promise<void> => {
       const { data } = await $axios.post('/login', userData);
       this.setResponse(data);
     })
@@ -43,8 +43,9 @@ export default class User extends VuexModule {
 
   // 新規登録
   @Action({ rawError: true })
-  public async createUser(userData: signUpValues) {
-    const { data } = await $axios.post('/register', userData);
+  public async createUser(userData: any) {
+    const {data} = await $axios.post('api/register', userData);
+    console.log(data);
     this.setResponse(data);
   }
 }

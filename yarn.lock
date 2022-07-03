@@ -2117,11 +2117,6 @@
   resolved "https://registry.yarnpkg.com/@vue/composition-api/-/composition-api-1.6.3.tgz#3b1486608f1682e8bc03c71e1fd58013b0b7a093"
   integrity sha512-f0TgOKqU460QyVLp5URi8LMVJ3eE3/3OuFrytItSNmp5FbisS67jVvUZg7pzIzZonqc4chG1SNS48PMOsH7a4g==
 
-"@vue/devtools-api@^6.0.0-beta.15":
-  version "6.1.4"
-  resolved "https://registry.yarnpkg.com/@vue/devtools-api/-/devtools-api-6.1.4.tgz#b4aec2f4b4599e11ba774a50c67fa378c9824e53"
-  integrity sha512-IiA0SvDrJEgXvVxjNkHPFfDx6SXw0b/TUkqMcDZWNg9fnCAHbTpoo59YfJ9QLFkwa3raau5vSlRVzMSLDnfdtQ==
-
 "@vue/reactivity-transform@^3.2.26":
   version "3.2.37"
   resolved "https://registry.yarnpkg.com/@vue/reactivity-transform/-/reactivity-transform-3.2.37.tgz#0caa47c4344df4ae59f5a05dde2a8758829f8eca"
@@ -2669,6 +2664,11 @@ base@^0.11.1:
     isobject "^3.0.1"
     mixin-deep "^1.2.0"
     pascalcase "^0.1.1"
+
+bezier-easing@2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/bezier-easing/-/bezier-easing-2.1.0.tgz#c04dfe8b926d6ecaca1813d69ff179b7c2025d86"
+  integrity sha512-gbIqZ/eslnUFC1tjEvtz0sgx+xTK20wDnYMIA27VA04R7w6xxXQPZDbibjA9DTWZRA2CXtwHykkVzlCaAJAZig==
 
 big.js@^5.2.2:
   version "5.2.2"
@@ -9841,12 +9841,10 @@ vary@^1.1.2, vary@~1.1.2:
   resolved "https://registry.yarnpkg.com/vary/-/vary-1.1.2.tgz#2299f02c6ded30d4a5961b0b9f74524a18f634fc"
   integrity sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==
 
-vee-validate@^4.5.11:
-  version "4.5.11"
-  resolved "https://registry.yarnpkg.com/vee-validate/-/vee-validate-4.5.11.tgz#cdf3dd3d2474e9ab2c2074ba641503823258743d"
-  integrity sha512-bNF2TtuRnLnPsw6+Q/P3bMx8c2iJbvQmyikTr9r65PLAdqtdhQxnsIS3ayYNIzNWZ50sysv01DteN9h3XT/gFg==
-  dependencies:
-    "@vue/devtools-api" "^6.0.0-beta.15"
+vee-validate@3:
+  version "3.4.14"
+  resolved "https://registry.yarnpkg.com/vee-validate/-/vee-validate-3.4.14.tgz#51f91c01d6660c43c6252c417c89fb07cdf8b8dd"
+  integrity sha512-Hqqic8G9WcRSIzCxiCPqMZv4qB8JE1lIQqIOLDm2K5BXUiL8d4a2+kqkanv8gQSGDzYpnCQZ7BO/T99Aj05T1Q==
 
 vendors@^1.0.0:
   version "1.0.4"
@@ -9908,6 +9906,13 @@ vue-router@^3.5.1:
   version "3.5.4"
   resolved "https://registry.yarnpkg.com/vue-router/-/vue-router-3.5.4.tgz#c453c0b36bc75554de066fefc3f2a9c3212aca70"
   integrity sha512-x+/DLAJZv2mcQ7glH2oV9ze8uPwcI+H+GgTgTmb5I55bCgY3+vXWIsqbYUzbBSZnwFHEJku4eoaH/x98veyymQ==
+
+vue-scrollto@^2.20.0:
+  version "2.20.0"
+  resolved "https://registry.yarnpkg.com/vue-scrollto/-/vue-scrollto-2.20.0.tgz#3ba52239a62710c97003d12d4393f1f3393cd5cc"
+  integrity sha512-7i+AGKJTThZnMEkhIPgrZjyAX+fXV7/rGdg+CV283uZZwCxwiMXaBLTmIc5RTA4uwGnT+E6eJle3mXQfM2OD3A==
+  dependencies:
+    bezier-easing "2.1.0"
 
 vue-server-renderer@^2.6.12, vue-server-renderer@^2.6.14:
   version "2.6.14"

@@ -23,3 +23,8 @@ export interface userData {
   email: string,
   password: string,
 }
+
+export interface backendErrorObject {
+  failed: boolean;
+  key: string,
+}

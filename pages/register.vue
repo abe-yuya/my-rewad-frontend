@@ -71,9 +71,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, useRouter } from '@nuxtjs/composition-api'
+import { defineComponent, ref, reactive, useRouter } from '@nuxtjs/composition-api'
 import { userStore } from '~/store'
 import { signUpValues } from '~/types/props-types'
+import { filterBackendErrors } from '~/compositions/validation-styles'
 
 export default defineComponent({
   setup(_) {
@@ -85,20 +86,38 @@ export default defineComponent({
       confirm_password: '',
       work_place: '',
       occupation: '',
-    })
+    });
+    const backendErrorValues = ref<string[]>([]);
+    const backendErrorKeys = ref<string[]>([]);
 
 
     async function register() {
-      await userStore.createUser({
-        username: inputValues.username,
-        email: inputValues.email,
-        password: inputValues.password,
-        confirm_password: inputValues.confirm_password,
-        work_place: inputValues.work_place,
-        occupation: inputValues.occupation,
-      })
-      router.push('/welcome')
+      try {
+        await userStore.createUser({
+          username: inputValues.username,
+          email: inputValues.email,
+          password: inputValues.password,
+          confirm_password: inputValues.confirm_password,
+          work_place: inputValues.work_place,
+          occupation: inputValues.occupation,
+        });
+         // router.push('/welcome')
+      } catch(error) {
+        backendErrorKeys.value = [
+          'username',
+          'email',
+          'password',
+          'confirm_password',
+          'work_place',
+          'occupation',
+        ];
+        backendErrorValues.value = [error.response.data.messages];
+      }
     }
+
+    const resetBackendErrors = (key: string) => {
+      backendErrorKeys.value = filterBackendErrors(key, backendErrorValues.value);
+    };
 
     async function login() {
       router.push('/login')
