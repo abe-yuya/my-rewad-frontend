@@ -12,7 +12,8 @@
 <!--        class="shadow appearance-none border rounded w-full py-2 px-3 text-grey-darker"-->
 <!--      >-->
 <!--    </div>-->
-    <BackendErrors :backend-errors="backendErrorValues" />
+
+<!--    <BackendErrors :backend-errors="backendErrorValues" />-->
     <ValidationInput
       label="メールアドレス"
       input-name="email"
@@ -63,12 +64,12 @@ import { LoginValues } from '~/types/props-types';
 import { filterBackendErrors } from '~/compositions/validation-styles';
 import { isBackendError } from '~/compositions/validation-styles';
 import ValidationInput from '~/components/molecules/ValidationInput.vue';
-import BackendErrors from '~/components/atoms/BackendErrors';
+// import BackendErrors from '~/components/atoms/BackendErrors';
 
 export default defineComponent ({
   components: {
     ValidationInput,
-    BackendErrors,
+    // BackendErrors,
   },
   setup(_) {
     const router = useRouter();
@@ -81,13 +82,15 @@ export default defineComponent ({
 
     async function submit() {
       try {
-        await userStore.login( {
+        const response = await userStore.login( {
           email: inputValues.email,
           password: inputValues.password,
         });
-         // router.push('/welcome');
+        console.log(response);
+          // router.push('/welcome');
       } catch(error) {
         console.log('エラーーーーーーーーーーー');
+        console.log(error);
       }
     }
 

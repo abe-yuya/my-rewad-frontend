@@ -6,47 +6,62 @@
           <h1 class="mb-8 text-3xl text-center">
             新規登録
           </h1>
-          <input
-            type="text"
-            v-model="inputValues.username"
-            class="block border border-grey-light w-full p-3 rounded mb-4"
-            name="username"
-            placeholder="ユーザー名"
+          <BackendErrors :backend-error-messages="backendErrorValues" />
+          <ValidationInput
+            label="ユーザー名"
+            input-name="username"
+            rules="required|string|maxLength:255"
+            placeholder="my-reward"
+            :backend-error-obj="isBackendError('username', backendErrorKeys)"
+            @input="inputValues.username = $event"
+            @reset-backend-error="resetBackendErrors"
           />
-          <input
-            type="text"
-            v-model="inputValues.email"
-            class="block border border-grey-light w-full p-3 rounded mb-4"
-            name="email"
-            placeholder="メールアドレス"
+          <ValidationInput
+            label="メールアドレス"
+            input-name="email"
+            rules="required|email|maxLength:255"
+            placeholder="例) my-reward@example.com"
+            :backend-error-obj="isBackendError('email', backendErrorKeys)"
+            @input="inputValues.email = $event"
+            @reset-backend-error="resetBackendErrors"
           />
-          <input
-            type="text"
-            v-model="inputValues.password"
-            class="block border border-grey-light w-full p-3 rounded mb-4"
-            name="password"
+          <ValidationPasswordInput
+            label="パスワード"
+            input-name="password"
+            :rules="`required|password`"
             placeholder="パスワード"
+            description-type="normal"
+            :backend-error-obj="isBackendError('password', backendErrorKeys)"
+            @input="inputValues.password = $event"
+            @reset-backend-error="resetBackendErrors"
           />
-          <input
-            type="text"
-            v-model="inputValues.confirm_password"
-            class="block border border-grey-light w-full p-3 rounded mb-4"
-            name="confirm_password"
+          <ValidationPasswordInput
+            label="パスワード（確認用）"
+            input-name="confirm_password"
+            :rules="`required|password|isSamePassword:${inputValues.password}`"
             placeholder="パスワード（確認用）"
+            description-type="confirm"
+            :backend-error-obj="isBackendError('confirm_password', backendErrorKeys)"
+            @input="inputValues.confirm_password = $event"
+            @reset-backend-error="resetBackendErrors"
           />
-          <input
-            type="text"
-            v-model="inputValues.work_place"
-            class="block border border-grey-light w-full p-3 rounded mb-4"
-            name="work_place"
-            placeholder="会社名"
+          <ValidationInput
+            label="会社名"
+            input-name="work_place"
+            rules="string|maxLength:255"
+            placeholder="例)my-reward株式会社"
+            :backend-error-obj="isBackendError('work_place', backendErrorKeys)"
+            @input="inputValues.work_place = $event"
+            @reset-backend-error="resetBackendErrors"
           />
-          <input
-            type="text"
-            v-model="inputValues.occupation"
-            class="block border border-grey-light w-full p-3 rounded mb-4"
-            name="occupation"
-            placeholder="職業"
+          <ValidationInput
+            label="職業"
+            input-name="occupation"
+            rules="string|maxLength:255"
+            placeholder="例)エンジニア"
+            :backend-error-obj="isBackendError('occupation', backendErrorKeys)"
+            @input="inputValues.occupation = $event"
+            @reset-backend-error="resetBackendErrors"
           />
           <button
             @click="register"
@@ -71,12 +86,20 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, reactive, useRouter } from '@nuxtjs/composition-api'
-import { userStore } from '~/store'
-import { signUpValues } from '~/types/props-types'
-import { filterBackendErrors } from '~/compositions/validation-styles'
+import { defineComponent, ref, reactive, useRouter } from '@nuxtjs/composition-api';
+import { userStore } from '~/store';
+import { signUpValues } from '~/types/props-types';
+import { filterBackendErrors, isBackendError } from '~/compositions/validation-styles';
+import BackendErrors from '~/components/atoms/BackendErrors.vue';
+import ValidationInput from '~/components/molecules/ValidationInput.vue';
+import ValidationPasswordInput from '~/components/molecules/ValidationPasswordInput';
 
 export default defineComponent({
+  components: {
+    ValidationInput,
+    ValidationPasswordInput,
+    BackendErrors,
+  },
   setup(_) {
     const router = useRouter();
     const inputValues = reactive<signUpValues>({
@@ -93,7 +116,7 @@ export default defineComponent({
 
     async function register() {
       try {
-        await userStore.createUser({
+        const response = await userStore.createUser({
           username: inputValues.username,
           email: inputValues.email,
           password: inputValues.password,
@@ -101,22 +124,24 @@ export default defineComponent({
           work_place: inputValues.work_place,
           occupation: inputValues.occupation,
         });
-         // router.push('/welcome')
+
+        if (response.status === 200) {
+          router.push('/welcome')
+        }
+
+        // バリデーションエラー
+        if (response.status === 422) {
+          backendErrorKeys.value = Object.keys(response.messages);
+          backendErrorValues.value = Object.values(response.messages, ).flat() as string[];
+        }
       } catch(error) {
-        backendErrorKeys.value = [
-          'username',
-          'email',
-          'password',
-          'confirm_password',
-          'work_place',
-          'occupation',
-        ];
-        backendErrorValues.value = [error.response.data.messages];
+        console.log(error);
       }
     }
 
+    // NOTE: emit時にバックエンドのエラーをリセットする目的
     const resetBackendErrors = (key: string) => {
-      backendErrorKeys.value = filterBackendErrors(key, backendErrorValues.value);
+      backendErrorKeys.value = filterBackendErrors(key, backendErrorKeys.value);
     };
 
     async function login() {
@@ -128,6 +153,10 @@ export default defineComponent({
       register,
       login,
       inputValues,
+      resetBackendErrors,
+      backendErrorKeys,
+      backendErrorValues,
+      isBackendError
     }
   },
 });

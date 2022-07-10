@@ -1,9 +1,10 @@
 <template>
   <ul
-    v-if="backendErrors.length > 0"
+    v-if="backendErrorMessages.length > 0"
     id="backend-errors"
+    class="text-red-400"
   >
-    <template v-for="(error, index) in backendErrors">
+    <template v-for="(error, index) in backendErrorMessages">
       <li :key="index">{{ `・${error}` }}</li>
     </template>
   </ul>
@@ -20,9 +21,9 @@ import VueScrollTo from 'vue-scrollto';
 
 export default defineComponent({
   props: {
-    backendErrors: {
-      type: Array as () => string[],
-      default: () => [],
+    backendErrorMessages: {
+      type: Array,
+      default: [],
     },
     // NOTE: エラー表示された時、スクロールしたくない箇所だけfalseにする
     isScroll: {
@@ -31,13 +32,15 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const { backendErrors, isScroll } = toRefs(props);
+    const { backendErrorMessages, isScroll } = toRefs(props);
 
     watch(
-      backendErrors,
+      backendErrorMessages,
       async (): Promise<void> => {
+        console.log('BackendError');
+        console.log(backendErrorMessages);
         await nextTick();
-        if (backendErrors.value.length > 0 && isScroll.value) {
+        if (backendErrorMessages.value.length > 0 && isScroll.value) {
           VueScrollTo.scrollTo('#backend-errors');
         }
       }
