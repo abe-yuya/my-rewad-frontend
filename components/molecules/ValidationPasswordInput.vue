@@ -42,8 +42,9 @@ export default defineComponent({
   },
   props: {
     setValue: {
-      type: [String, Number],
-      default: '',
+      type: String,
+      required: false,
+      default: undefined,
     },
     label: {
       type: String,
@@ -81,7 +82,7 @@ export default defineComponent({
     },
     backendErrorObj: {
       type: Object,
-      // required: true,
+      required: true,
     },
   },
   setup(props, ctx) {

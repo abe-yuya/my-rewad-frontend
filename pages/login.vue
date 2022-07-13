@@ -1,19 +1,6 @@
 <template>
   <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 flex flex-col">
-<!--    <div class="mb-4">-->
-<!--      <label for="email" class="block text-grey-darker text-sm font-bold mb-2">-->
-<!--        メールアドレス-->
-<!--      </label>-->
-<!--      <input-->
-<!--        id="email"-->
-<!--        type="text"-->
-<!--        v-model="inputValues.email"-->
-<!--        placeholder="my-reward@example.com"-->
-<!--        class="shadow appearance-none border rounded w-full py-2 px-3 text-grey-darker"-->
-<!--      >-->
-<!--    </div>-->
-
-<!--    <BackendErrors :backend-errors="backendErrorValues" />-->
+    <BackendErrors :backend-error-messages="backendErrorValues" />
     <ValidationInput
       label="メールアドレス"
       input-name="email"
@@ -21,22 +8,19 @@
       placeholder="例) my-reward@example.com"
       :set-Value="inputValues.email"
       :backend-error-obj="isBackendError('email', backendErrorKeys)"
-      @input="(v) => (inputValues.email = v)"
+      @input="inputValues.email = $event"
       @reset-backend-error="resetBackendErrors"
     />
-    <div class="mb-6">
-      <label for="password" class="block text-grey-darker text-sm font-bold mb-2">
-        パスワード
-      </label>
-      <input
-        id="password"
-        type="password"
-        v-model="inputValues.password"
-        placeholder="password"
-        class="shadow appearance-none border border-red rounded w-full py-2 px-3 text-grey-darker mb-3"
-      >
-      <p class="text-red text-xs italic">Please choose a password.</p>
-    </div>
+    <ValidationPasswordInput
+      label="パスワード"
+      input-name="password"
+      :rules="`required|password`"
+      placeholder="パスワード"
+      description-type="normal"
+      :backend-error-obj="isBackendError('password', backendErrorKeys)"
+      @input="inputValues.password = $event"
+      @reset-bakcend-error="resetBackendErrors"
+    />
     <div class="flex items-center justify-between">
       <button
         @click="submit"
@@ -64,12 +48,14 @@ import { LoginValues } from '~/types/props-types';
 import { filterBackendErrors } from '~/compositions/validation-styles';
 import { isBackendError } from '~/compositions/validation-styles';
 import ValidationInput from '~/components/molecules/ValidationInput.vue';
-// import BackendErrors from '~/components/atoms/BackendErrors';
+import ValidationPasswordInput from '~/components/molecules/ValidationPasswordInput.vue';
+import BackendErrors from '~/components/atoms/BackendErrors.vue';
 
 export default defineComponent ({
   components: {
     ValidationInput,
-    // BackendErrors,
+    ValidationPasswordInput,
+    BackendErrors,
   },
   setup(_) {
     const router = useRouter();
@@ -82,14 +68,22 @@ export default defineComponent ({
 
     async function submit() {
       try {
+        await userStore.csrfCookie();
         const response = await userStore.login( {
           email: inputValues.email,
           password: inputValues.password,
         });
-        console.log(response);
-          // router.push('/welcome');
+
+        if (response.data.status === 200) {
+          router.push('/welcome');
+        }
+
+        // バリデーションエラー
+        if (response.data.status === 422) {
+          backendErrorKeys.value = Object.keys(response.data.messages);
+          backendErrorValues.value = Object.values(response.data.messages, ).flat() as string[];
+        }
       } catch(error) {
-        console.log('エラーーーーーーーーーーー');
         console.log(error);
       }
     }

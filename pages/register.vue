@@ -92,7 +92,7 @@ import { signUpValues } from '~/types/props-types';
 import { filterBackendErrors, isBackendError } from '~/compositions/validation-styles';
 import BackendErrors from '~/components/atoms/BackendErrors.vue';
 import ValidationInput from '~/components/molecules/ValidationInput.vue';
-import ValidationPasswordInput from '~/components/molecules/ValidationPasswordInput';
+import ValidationPasswordInput from '~/components/molecules/ValidationPasswordInput.vue';
 
 export default defineComponent({
   components: {
@@ -124,15 +124,13 @@ export default defineComponent({
           work_place: inputValues.work_place,
           occupation: inputValues.occupation,
         });
-
-        if (response.status === 200) {
+        if (response.data.status === 200) {
           router.push('/welcome')
         }
-
         // バリデーションエラー
-        if (response.status === 422) {
-          backendErrorKeys.value = Object.keys(response.messages);
-          backendErrorValues.value = Object.values(response.messages, ).flat() as string[];
+        if (response.data.status === 422) {
+          backendErrorKeys.value = Object.keys(response.data.messages);
+          backendErrorValues.value = Object.values(response.data.messages, ).flat() as string[];
         }
       } catch(error) {
         console.log(error);
